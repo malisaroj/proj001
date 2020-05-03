@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QTableView
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic, QtWidgets
 import sqlite3
@@ -24,15 +24,33 @@ class Example(base_1, form_1):
         self.main.show()
         self.close()
 
+    def about(self):
+        dlg = AboutDialog()
+        dlg.exec_()
+
     def search(self):
+        itemName = self.lineEdit_2.text()
+        brandName = self.lineEdit_3.text()
+        size = self.lineEdit_4.text()
         sqliteConnection = sqlite3.connect('SQLite_Python.db')
         cursor = sqliteConnection.cursor()
-        result = cursor.execute("SELECT * FROM `item` ORDER BY `itemname` ASC")
-        self.tableWidget.setRowCount(0)
-        for row_number, row_data in enumerate(result):
-            self.tableWidget.insertRow(row_number)
-            for column_number, data in enumerate(row_data):
-                self.tableWidget.setItem(row_number, column_number, QtWidgets.QTableWidgetItem(str(data)))
+        if(itemName == ''):
+
+            result = cursor.execute("SELECT * FROM `item` ORDER BY `itemname` ASC")
+            self.tableWidget.setRowCount(0)
+            for row_number, row_data in enumerate(result):
+                self.tableWidget.insertRow(row_number)
+                for column_number, data in enumerate(row_data):
+                    self.tableWidget.setItem(row_number, column_number, QtWidgets.QTableWidgetItem(str(data)))
+        else:
+            print(itemName)
+            result = cursor.execute("SELECT * FROM `item` WHERE itemname=`itemName` ORDER BY `itemname` ASC")
+            self.tableWidget.setRowCount(0)
+            for row_number, row_data in enumerate(result):
+                self.tableWidget.insertRow(row_number)
+                for column_number, data in enumerate(row_data):
+                    self.tableWidget.setItem(row_number, column_number, QtWidgets.QTableWidgetItem(str(data)))
+
         cursor.close()
         sqliteConnection.close()
 
